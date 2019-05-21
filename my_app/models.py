@@ -18,7 +18,7 @@ class Customers(db.Model):
 
     customer_erp_name = db.Column(db.String(100))
     customer_ultimate_name = db.Column(db.String(100))
-    date_added = db.Column(db.Time)
+    date_added = db.Column(db.DateTime)
     hash_value = db.Column(db.String(50), primary_key=True)
 
     # def __repr__(self):
@@ -30,7 +30,7 @@ class Services(db.Model):
     customer_id = db.Column(db.Integer, primary_key=True)
     customer_name = db.Column(db.String(100))
     as_sku = db.Column(db.String(45))
-    date_added = db.Column(db.Time)
+    date_added = db.Column(db.DateTime)
 
 
 class Coverage(db.Model):

@@ -53,15 +53,14 @@ def add_hash_to_xls(wb, ws):
 
         # Create a hash value and place it in the Has Column
         my_new_row[hash_col] = (hashlib.md5(str_to_hash.encode('utf-8')).hexdigest())
-        my_new_sheet.append(my_new_row)
 
     return my_new_sheet
 
 
 if __name__ == "__main__" and __package__ is None:
-    xlrd_wb, xlrd_ws = open_wb('tmp_TA Master Bookings.xlsx')
+    # xlrd_wb, xlrd_ws = open_wb('tmp_TA Master Bookings.xlsx')
     # wb, ws = open_wb('tmp_Master Renewals.xlsx')
+    xlrd_wb, xlrd_ws = open_wb('tmp_TA Customer List.xlsx')
 
     a_sheet = add_hash_to_xls(xlrd_wb, xlrd_ws)
-
     push_list_to_xls(a_sheet, 'test1.xlsx')
