@@ -1,6 +1,7 @@
 import hashlib
 import xlrd
 import datetime
+import time
 from my_app.func_lib.open_wb import open_wb
 from my_app.func_lib.push_list_to_xls import push_list_to_xls
 
@@ -11,6 +12,7 @@ def add_hash_to_xls(wb, ws):
     # The function returns a list of rows ready to be written to an xlsx file
 
     my_new_sheet = []
+    hash_dict = {}
 
     # Append a column called Row Hash to the Header Row
     my_new_row = ws.row_values(0)
@@ -51,16 +53,28 @@ def add_hash_to_xls(wb, ws):
         # This will make list_to_hash type to all one big string called my_string
         str_to_hash = ''.join(list_to_hash)
 
-        # Create a hash value and place it in the Has Column
-        my_new_row[hash_col] = (hashlib.md5(str_to_hash.encode('utf-8')).hexdigest())
+        # Create a 32 bit hash value and place it in the Has Column
+        hash_result = (hashlib.md5(str_to_hash.encode('utf-8')).hexdigest())
+
+        tie_breaker = 1
+        if hash_result in hash_dict:
+            # print('new', hash_result)
+            # print('found', hash_dict[hash_result])
+            # time.sleep(1)
+            tie_breaker = hash_dict[hash_result] + 1
+            hash_dict[hash_result] = tie_breaker
+        else:
+            hash_dict[hash_result] = tie_breaker
+
+        my_new_row[hash_col] = hash_result + '-' + str(tie_breaker)
 
     return my_new_sheet
 
 
 if __name__ == "__main__" and __package__ is None:
-    # xlrd_wb, xlrd_ws = open_wb('tmp_TA Master Bookings.xlsx')
+    xlrd_wb, xlrd_ws = open_wb('tmp_TA Master Bookings.xlsx')
     # wb, ws = open_wb('tmp_Master Renewals.xlsx')
-    xlrd_wb, xlrd_ws = open_wb('tmp_TA Customer List.xlsx')
+    # xlrd_wb, xlrd_ws = open_wb('tmp_TA Customer List.xlsx')
 
     a_sheet = add_hash_to_xls(xlrd_wb, xlrd_ws)
-    push_list_to_xls(a_sheet, 'test1.xlsx')
+    push_list_to_xls(a_sheet, 'tmp_TA Master Bookings_hashed.xlsx')

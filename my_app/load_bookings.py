@@ -1,61 +1,39 @@
 from my_app import db
-from my_app.models import Customers, Services
+from my_app.models import Bookings
 from my_app.func_lib.open_wb import open_wb
-import datetime
+from my_app.func_lib.add_hash_to_xls import add_hash_to_xls
+from my_app.func_lib.push_list_to_xls import push_list_to_xls
+from datetime import datetime
 
 #
 # db.create_all()
 #
 
-# Customers.__table__.drop(db.session.bind)
-# Customers.__table__.create(db.session.bind)
-Services.__table__.drop(db.session.bind)
-Services.__table__.create(db.session.bind)
+Bookings.__table__.drop(db.session.bind)
+Bookings.__table__.create(db.session.bind)
 
-now = datetime.datetime.now()
-print(now)
+now = datetime.now()
+
+# Add a hash to this sheet
+xlrd_wb, xlrd_ws = open_wb('tmp_TA Master Bookings.xlsx')
+a_sheet = add_hash_to_xls(xlrd_wb, xlrd_ws)
+push_list_to_xls(a_sheet, 'tmp_TA Master Bookings_hashed.xlsx')
 
 
-# ws, wb = open_wb('tmp_TA Customer List.xlsx')
-ws, wb = open_wb('tmp_TA AS SKUs.xlsx')
-print(wb.nrows)
-customer_list = []
+# Now open the sheet that includes a unique hash value
+xlrd_wb, xlrd_ws = open_wb('tmp_TA Master Bookings_hashed.xlsx')
 
-for row_num in range(wb.nrows):
-    # print(wb.row_values(row_num, 1))
-    print(wb.row_values(row_num, 0)[0])
-    a_cust = Services()
-    a_cust.customer_name = wb.row_values(row_num, 0)[0]
-    a_cust.as_sku= wb.row_values(row_num, 0)[1]
-    a_cust.date_added = now
-    db.session.add(a_cust)
-    customer_list.append(wb.row_values(row_num, 1))
+# Loop over the sheet starting row 1 to exclude headers
+for row_num in range(1, xlrd_ws.nrows):
+    a_booking = Bookings()
+
+    a_booking.customer_erp_name = xlrd_ws.cell_value(row_num, 0)
+    a_booking.total_bookings = xlrd_ws.cell_value(row_num, 1)
+    a_booking.product_id = xlrd_ws.cell_value(row_num, 17)
+    a_booking.date_added = now
+    a_booking.hash_value = xlrd_ws.cell_value(row_num, 18)
+
+    db.session.add(a_booking)
 
 db.session.commit()
-
-
-print(customer_list)
-
-
 exit()
-
-#
-# # my_cov = Coverage()
-# my_cust = Customers()
-#
-#
-# my_cust.first_name = 'Jim'
-# my_cust.last_name = 'Pisano'
-# #
-# # my_cov.pss_name = 'Cash'
-# # my_cov.tsa_name ='Jim'
-# #
-# #
-# db.session.add(my_cust)
-# # db.session.add(my_cov)
-# #
-# #
-# db.session.commit()
-#
-# #print (my_cov)
-#

@@ -23,7 +23,7 @@ push_list_to_xls(a_sheet, 'tmp_TA Customer List_hashed.xlsx')
 # Now open the sheet that includes a unique hash value
 xlrd_wb, xlrd_ws = open_wb('tmp_TA Customer List_hashed.xlsx')
 
-customer_list = []
+# Loop over the sheet starting row 1 to exclude headers
 for row_num in range(1, xlrd_ws.nrows):
     a_cust = Customers()
     a_cust.customer_ultimate_name = xlrd_ws.cell_value(row_num, 0)

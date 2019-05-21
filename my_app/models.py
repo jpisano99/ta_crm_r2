@@ -3,14 +3,11 @@ from my_app import db
 class Bookings(db.Model):
     __tablename__ = 'bookings'
 
-    customer_name = db.Column(db.String(100))
-    total_bookings = db.Column(db.String(100))
-
-    customer_ultimate_name = db.Column(db.String(100))
-    date_added = db.Column(db.Time)
-    hash_value = db.Column(db.Integer, primary_key=True)
-
-
+    erp_end_customer_name = db.Column(db.String(100))
+    total_bookings = db.Column(db.Float)
+    product_id = db.Column(db.String(25))
+    date_added = db.Column(db.DateTime)
+    hash_value = db.Column(db.String(50), primary_key=True)
 
 
 class Customers(db.Model):
@@ -23,6 +20,7 @@ class Customers(db.Model):
 
     # def __repr__(self):
     #    return "<name {}: '{} , {}'>".format(self.id, self.last_name,self.first_name,self.company_name)
+
 
 class Services(db.Model):
     __tablename__ = 'services'
@@ -56,6 +54,7 @@ class Coverage(db.Model):
 
     def newest_name(num):
         return Coverage.query.order_by(Coverage.pss_name).limit(num)
+
 
 print ('hello from models')
 
