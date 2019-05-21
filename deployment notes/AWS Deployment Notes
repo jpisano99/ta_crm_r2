@@ -1,0 +1,19 @@
+Required for AWS EBS deployment:
+Create a ZIP file with:
+    application.py (a mod_WSGI file in disguise)
+    my_app directory structure
+    requirements.txt
+
+Tested with Python 3.6 AWS Linux 2.7.1
+
+Statics:
+    In order to find Statics
+    Goto EBS Configuration-> Software
+
+    Leave Path: /static/
+    CHANGE Directory from: static/ to my_app/static
+
+SmartSheet requires enum34 and enum34 causes the following error
+Throws error: flask aws AttributeError: module 'enum' has no attribute 'IntFlag'
+In Python 3.6 you can simply REMOVE enum34 to resolve this problem
+
