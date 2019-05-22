@@ -1,12 +1,13 @@
 import hashlib
 import xlrd
 import datetime
-import time
+from datetime import datetime as dt
+
 from my_app.func_lib.open_wb import open_wb
 from my_app.func_lib.push_list_to_xls import push_list_to_xls
 
 
-def add_hash_to_xls(wb, ws):
+def add_hash_to_xls(wb, ws, date_added=dt.now()):
     # This function takes in a xlrd workbook and xlrd worksheet
     # It adds a hash value to the last column to uniquely identify the row
     # The function returns a list of rows ready to be written to an xlsx file
@@ -14,15 +15,18 @@ def add_hash_to_xls(wb, ws):
     my_new_sheet = []
     hash_dict = {}
 
-    # Append a column called Row Hash to the Header Row
+    # Append columns called Date Added and Row Hash to the Header Row
     my_new_row = ws.row_values(0)
+    my_new_row.append('Date Added')
     my_new_row.append('Row Hash')
+    date_added_col = len(my_new_row) - 2
     hash_col = len(my_new_row) - 1
     my_new_sheet.append(my_new_row)
 
     for row_num in range(1, ws.nrows):
         my_new_row = ws.row_values(row_num)
         my_xlrd_row = ws.row(row_num)
+        my_new_row.append('')  # place for the Date Added
         my_new_row.append('')  # place for the Hash Val
         my_new_sheet.append(my_new_row)
         list_to_hash = []
@@ -53,19 +57,17 @@ def add_hash_to_xls(wb, ws):
         # This will make list_to_hash type to all one big string called my_string
         str_to_hash = ''.join(list_to_hash)
 
-        # Create a 32 bit hash value and place it in the Has Column
+        # Create a 32 character hash value and place it in the Hash Column
         hash_result = (hashlib.md5(str_to_hash.encode('utf-8')).hexdigest())
 
         tie_breaker = 1
         if hash_result in hash_dict:
-            # print('new', hash_result)
-            # print('found', hash_dict[hash_result])
-            # time.sleep(1)
             tie_breaker = hash_dict[hash_result] + 1
             hash_dict[hash_result] = tie_breaker
         else:
             hash_dict[hash_result] = tie_breaker
 
+        my_new_row[date_added_col] = date_added
         my_new_row[hash_col] = hash_result + '-' + str(tie_breaker)
 
     return my_new_sheet
